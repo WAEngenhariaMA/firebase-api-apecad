@@ -1,0 +1,15 @@
+{
+  "name": "firebase-api-apecad",
+  "version": "1.0.0",
+  "description": "API do APECAD 2025 com Firebase Admin",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "firebase-admin": "^11.10.1",
+    "cors": "^2.8.5"
+  }
+}

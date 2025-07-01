@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastro Comissão Técnica - APECAD</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #372c22;
+      }
+      header {
+        background-color: #000000;
+        color: white;
+        padding: 15px 30px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      header img {
+        height: 40px;
+      }
+      .container {
+        max-width: 800px;
+        margin: 30px auto;
+        background: #ffffff;
+        padding: 30px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+      }
+      h2 {
+        margin-bottom: 20px;
+        color: #ff7f00;
+      }
+      label,
+      select,
+      input,
+      button {
+        display: block;
+        width: 100%;
+        margin-bottom: 10px;
+        font-size: 15px;
+      }
+      select,
+      input {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      button {
+        background-color: #ff7f00;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        border-radius: 5px;
+        padding: 8px;
+        font-size: 14px;
+      }
+      button:hover {
+        background-color: #cc6600;
+      }
+      .section {
+        margin-top: 20px;
+      }
+      ul {
+        list-style: none;
+        padding-left: 0;
+      }
+      li {
+        padding: 5px 0;
+      }
+      .button-row {
+        display: flex;
+        gap: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Cadastro Comissão e Jogadores</h1>
+      <img src="img/Logo_APECAD.png" alt="Logo APECAD" style="height: 80px" />
+    </header>
+    <div class="container">
+      <form
+        id="cadastroForm"
+        style="display: flex; flex-direction: column; gap: 18px"
+      >
+        <h2 style="text-align: center">Escolha o time</h2>
+        <div
+          id="escudoContainer"
+          style="text-align: center; margin-bottom: 10px"
+        >
+          <!-- Imagem do escudo será exibida aqui -->
+        </div>
+        <div style="margin-bottom: 5px">
+          <select id="selectTime" required>
+            <option value="">Selecione um time</option>
+            <option value="Salazar FC">Salazar FC</option>
+            <option value="OsParças">OsParças</option>
+            <option value="Arsenal">Arsenal</option>
+            <option value="Fulham FC">Fulham FC</option>
+            <option value="Realbets FC">Realbets FC</option>
+            <option value="São Luis City">São Luis City</option>
+            <option value="Barcelona Trizidela">Barcelona Trizidela</option>
+            <option value="S.E.T">S.E.T</option>
+            <option value="Hertha Bebim">Hertha Bebim</option>
+          </select>
+        </div>
+        <div class="section" style="margin: 0">
+          <label for="inputComissao">Adicionar Comissão Técnica (até 2)</label>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap">
+            <input
+              type="text"
+              id="inputComissao"
+              placeholder="Nome do integrante"
+              style="flex: 1; min-width: 150px"
+            />
+            <button
+              type="button"
+              onclick="adicionar('comissao')"
+              style="width: 100px"
+            >
+              Adicionar
+            </button>
+            <button
+              type="button"
+              onclick="limparLista('comissao')"
+              style="width: 100px"
+            >
+              Limpar
+            </button>
+          </div>
+          <ul id="listaComissao"></ul>
+        </div>
+        <div class="section" style="margin: 0">
+          <label for="inputExtras">Adicionar Jogador Extra (até 3)</label>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap">
+            <input
+              type="text"
+              id="inputExtras"
+              placeholder="Nome do jogador extra"
+              style="flex: 1; min-width: 150px"
+            />
+            <button
+              type="button"
+              onclick="adicionar('extras')"
+              style="width: 100px"
+            >
+              Adicionar
+            </button>
+            <button
+              type="button"
+              onclick="limparLista('extras')"
+              style="width: 100px"
+            >
+              Limpar
+            </button>
+          </div>
+          <ul id="listaExtras"></ul>
+        </div>
+        <div class="section" style="margin: 0">
+          <label for="inputGoleiros">Adicionar Goleiro (até 3)</label>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap">
+            <input
+              type="text"
+              id="inputGoleiros"
+              placeholder="Nome do goleiro"
+              style="flex: 1; min-width: 150px"
+            />
+            <button
+              type="button"
+              onclick="adicionar('goleiros')"
+              style="width: 100px"
+            >
+              Adicionar
+            </button>
+            <button
+              type="button"
+              onclick="limparLista('goleiros')"
+              style="width: 100px"
+            >
+              Limpar
+            </button>
+          </div>
+          <ul id="listaGoleiros"></ul>
+        </div>
+        <button
+          type="button"
+          onclick="salvarCadastro()"
+          style="margin-top: 10px; font-size: 16px"
+        >
+          Salvar Cadastro
+        </button>
+      </form>
+    </div>
+    <style>
+      @media (max-width: 600px) {
+        .container {
+          padding: 10px !important;
+        }
+        form#cadastroForm {
+          gap: 10px !important;
+        }
+        .section label {
+          font-size: 14px;
+        }
+        .section input,
+        .section button,
+        select {
+          font-size: 14px;
+        }
+        .section div[style*="display:flex"] {
+          flex-direction: column !important;
+          gap: 6px !important;
+        }
+        button,
+        input,
+        select {
+          min-width: 0 !important;
+        }
+      }
+      form#cadastroForm ul {
+        margin: 0 0 5px 0;
+        padding: 0 0 0 10px;
+        background: #fff;
+        border-radius: 4px;
+        min-height: 24px;
+      }
+      form#cadastroForm li {
+        font-size: 15px;
+        color: #333;
+      }
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script>
+      // TODO: Substitua com suas configurações do Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyBjRqG1rJDtiNvNnRd0Kak9qgb-lH7TVIM",
+        authDomain: "campeonato-apecad.firebaseapp.com",
+        databaseURL: "https://campeonato-apecad-default-rtdb.firebaseio.com",
+        projectId: "campeonato-apecad",
+        storageBucket: "campeonato-apecad.appspot.com",
+        messagingSenderId: "1036485911922",
+        appId: "1:1036485911922:web:1d2bc651add5f17c65e9eb",
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+
+      window.salvarCadastro = async function () {
+        const time = document.getElementById("selectTime").value;
+        if (!time) return alert("Selecione um time.");
+
+        const comissao = Array.from(
+          document.querySelectorAll("#listaComissao li")
+        ).map((el) => el.textContent);
+        const extras = Array.from(
+          document.querySelectorAll("#listaExtras li")
+        ).map((el) => el.textContent);
+        const goleiros = Array.from(
+          document.querySelectorAll("#listaGoleiros li")
+        ).map((el) => el.textContent);
+
+        await db
+          .collection("cadastroTimes")
+          .doc(time)
+          .set({ comissao, extras, goleiros });
+        alert("Cadastro salvo com sucesso!");
+      };
+    </script>
+
+    <script>
+      const limites = {
+        comissao: 2,
+        extras: 3,
+        goleiros: 3,
+      };
+
+      function adicionar(tipo) {
+        const input = document.getElementById("input" + capitalize(tipo));
+        const lista = document.getElementById("lista" + capitalize(tipo));
+        if (lista.children.length >= limites[tipo])
+          return alert(`Limite de ${limites[tipo]} atingido.`);
+        if (!input.value.trim()) return;
+        const li = document.createElement("li");
+        li.textContent = input.value.trim();
+        lista.appendChild(li);
+        input.value = "";
+      }
+
+      function limparLista(tipo) {
+        const lista = document.getElementById("lista" + capitalize(tipo));
+        lista.innerHTML = "";
+      }
+
+      function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+      }
+    </script>
+    <script>
+      // Mapeamento dos times para os caminhos das imagens dos escudos
+      const escudos = {
+        "Salazar FC": "img/Salazar.png",
+        OsParças: "img/OsParças.png",
+        Arsenal: "img/Arsenal.png",
+        "Fulham FC": "img/Fulham.png",
+        "Realbets FC": "img/Realbets.png",
+        "São Luis City": "img/SãoLuisCity.png",
+        "Barcelona Trizidela": "img/BarcelonaTrizidela.png",
+        "S.E.T": "img/S.E.T.png",
+        "Hertha Bebim": "img/HerthaBebim.png",
+      };
+
+      const selectTime = document.getElementById("selectTime");
+      const escudoContainer = document.getElementById("escudoContainer");
+
+      selectTime.addEventListener("change", function () {
+        const time = selectTime.value;
+        escudoContainer.innerHTML = "";
+        if (escudos[time]) {
+          const img = document.createElement("img");
+          img.src = escudos[time];
+          img.alt = "Escudo " + time;
+          img.style.maxHeight = "120px";
+          escudoContainer.appendChild(img);
+        }
+      });
+    </script>
+  </body>
+</html>
