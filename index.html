@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SUPER COPA COHATRAC APECADÃO — Placar & Cartões</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --panel: #0b1220;
+        --line: #1f2937;
+        --ink: #e5e7eb;
+        --muted: #94a3b8;
+        --brand: #f59e0b;
+        --ok: #10b981;
+        --warn: #ef4444;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: linear-gradient(160deg, var(--bg), #060a12);
+        color: var(--ink);
+        font-family: Inter, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+      }
+      .wrap {
+        max-width: 980px;
+        margin: 16px auto;
+        padding: 0 14px;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.03),
+          rgba(0, 0, 0, 0)
+        );
+        backdrop-filter: blur(6px);
+        border-bottom: 1px solid var(--line);
+      }
+      .head-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 14px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .brand img {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        object-fit: cover;
+        border: 1px solid var(--line);
+        background: #000;
+      }
+      .brand h1 {
+        font-size: 16px;
+        margin: 0;
+        font-weight: 800;
+        line-height: 1.2;
+      }
+      .head-actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      a.btn-link,
+      button.btn {
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        padding: 10px 12px;
+        background: #0a0f1a;
+        color: var(--ink);
+        text-decoration: none;
+        cursor: pointer;
+      }
+      button.btn {
+        background: var(--brand);
+        color: #111;
+        font-weight: 800;
+        border: none;
+      }
+      button.ghost {
+        background: transparent;
+        color: var(--ink);
+        border: 1px solid var(--line);
+      }
+      .badge {
+        padding: 4px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: #0a0f1a;
+        color: #cbd5e1;
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px;
+        margin: 12px 0;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      label {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      input,
+      select {
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        padding: 10px 12px;
+        background: #0a0f1a;
+        color: var(--ink);
+      }
+      input[type="number"] {
+        width: 90px;
+        text-align: center;
+      }
+      h2 {
+        margin: 0 0 8px;
+        font-size: 18px;
+      }
+      h3 {
+        margin: 0 0 8px;
+        font-size: 16px;
+      }
+      .grid {
+        display: grid;
+        gap: 10px;
+      }
+      .grid.two {
+        grid-template-columns: 1fr 1fr;
+      }
+      @media (max-width: 860px) {
+        .grid.two {
+          grid-template-columns: 1fr;
+        }
+      }
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+      .table th,
+      .table td {
+        border-bottom: 1px solid var(--line);
+        padding: 8px;
+        text-align: left;
+      }
+      .table thead th {
+        color: #9aa4b2;
+        font-size: 12px;
+        background: #0c1424;
+      }
+      .tr-click {
+        cursor: pointer;
+      }
+      .tr-click:hover {
+        background: #0d1629;
+      }
+      .tagY {
+        background: rgba(245, 158, 11, 0.15);
+        border: 1px solid #92400e;
+        color: #fcd34d;
+        padding: 4px 8px;
+        border-radius: 8px;
+      }
+      .tagR {
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid #7f1d1d;
+        color: #fecaca;
+        padding: 4px 8px;
+        border-radius: 8px;
+      }
+      .note {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .err {
+        background: rgba(239, 68, 68, 0.12);
+        border: 1px solid #7f1d1d;
+        color: #fecaca;
+        padding: 10px;
+        border-radius: 10px;
+        margin-top: 8px;
+      }
+      .ok {
+        background: rgba(16, 185, 129, 0.12);
+        border: 1px solid #064e3b;
+        color: #a7f3d0;
+        padding: 10px;
+        border-radius: 10px;
+        margin-top: 8px;
+      }
+      .loader {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border: 2px solid #94a3b8;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        vertical-align: middle;
+        margin-left: 6px;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .empty {
+        padding: 12px;
+        border: 1px dashed var(--line);
+        border-radius: 10px;
+        color: #9aa4b2;
+        text-align: center;
+      }
+      .hide {
+        display: none !important;
+      }
+      .sep {
+        height: 1px;
+        background: var(--line);
+        margin: 10px 0;
+        border-radius: 1px;
+      }
+      .small {
+        font-size: 12px;
+      }
+      .right {
+        margin-left: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="head-inner wrap">
+        <div class="brand">
+          <img id="logo" alt="Escudo" />
+          <h1>SUPER COPA COHATRAC APECADÃO</h1>
+        </div>
+        <div class="head-actions">
+          <a id="classLink" class="btn-link" href="#" target="_blank"
+            >Classificação</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <!-- LOGIN (único visível ao abrir) -->
+      <section class="card" id="loginCard">
+        <h2>Login do Operador</h2>
+        <div class="row">
+          <div>
+            <label for="op_login">Usuário</label><br />
+            <input id="op_login" type="text" placeholder="ex.: samuel" />
+          </div>
+          <div>
+            <label for="op_pass">Senha</label><br />
+            <input id="op_pass" type="password" placeholder="••••" />
+          </div>
+          <button id="btnLogin" class="btn">Entrar</button>
+          <span id="loginInfo" class="badge hide"></span>
+        </div>
+        <div id="loginErr" class="err hide"></div>
+        <div class="note">
+          Somente operadores autorizados podem salvar placar e lançar cartões.
+        </div>
+      </section>
+
+      <!-- BLOCO GERAL (aparece só depois do login) -->
+      <section id="appBlock" class="hide">
+        <!-- FILTROS + CONFRONTOS -->
+        <section class="card">
+          <h2>Partidas do Dia</h2>
+          <div class="row">
+            <div>
+              <label>Data</label><br />
+              <input id="matchDate" type="date" />
+            </div>
+            <div style="min-width: 260px">
+              <label>Partida ativa</label><br />
+              <select id="matchSelect">
+                <option value="">— Selecione —</option>
+              </select>
+            </div>
+            <button id="reloadBtn" class="ghost">Recarregar</button>
+            <span id="listInfo" class="badge hide"></span>
+          </div>
+          <div id="loadErr" class="err hide"></div>
+
+          <div class="sep"></div>
+          <table class="table" id="tblConfrontos">
+            <thead>
+              <tr>
+                <th>Hora</th>
+                <th>Casa</th>
+                <th>Fora</th>
+                <th>Local</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="confrontosBody">
+              <tr>
+                <td colspan="5" class="empty">Nenhuma partida.</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="note">
+            Toque numa linha para **selecionar** a partida ativa.
+          </div>
+        </section>
+
+        <!-- PLACAR -->
+        <section class="card" id="scoreCard" class="hide">
+          <div class="row" style="justify-content: space-between">
+            <div class="row">
+              <span id="homeTag" class="badge"></span>
+              <strong style="font-size: 18px">x</strong>
+              <span id="awayTag" class="badge"></span>
+            </div>
+            <div class="row">
+              <input id="homeScore" type="number" min="0" placeholder="Casa" />
+              <input id="awayScore" type="number" min="0" placeholder="Fora" />
+              <button id="saveScore" class="btn">Salvar Placar</button>
+            </div>
+          </div>
+          <div id="scoreMsg" class="ok hide"></div>
+          <div class="note">Salva na aba “Resultados”.</div>
+        </section>
+
+        <!-- CARTÕES -->
+        <section class="card" id="cardsCard" class="hide">
+          <h2>Cartões</h2>
+          <div class="grid two">
+            <div>
+              <h3 id="homeTitle">Time Casa</h3>
+              <div class="row">
+                <select id="homePlayer"></select>
+                <select id="homeCardType">
+                  <option value="Y">Amarelo</option>
+                  <option value="R">Vermelho</option>
+                </select>
+                <input id="homeMinute" type="text" placeholder="min" />
+                <button id="addHomeCard" class="btn">Adicionar</button>
+              </div>
+              <div class="note">Jogadores da aba “Atletas”.</div>
+            </div>
+            <div>
+              <h3 id="awayTitle">Time Visitante</h3>
+              <div class="row">
+                <select id="awayPlayer"></select>
+                <select id="awayCardType">
+                  <option value="Y">Amarelo</option>
+                  <option value="R">Vermelho</option>
+                </select>
+                <input id="awayMinute" type="text" placeholder="min" />
+                <button id="addAwayCard" class="btn">Adicionar</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="sep"></div>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Jogador</th>
+                <th>Cartão</th>
+                <th>Min</th>
+                <th>Obs</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="cardsBody">
+              <tr>
+                <td colspan="6" class="empty">Nenhum cartão lançado.</td>
+              </tr>
+            </tbody>
+          </table>
+          <div id="cardMsg" class="ok hide"></div>
+          <div id="cardErr" class="err hide"></div>
+        </section>
+      </section>
+    </main>
+
+    <script>
+      /* ========= CONFIG ========= */
+      const WEB_APP_URL =
+        "https://script.google.com/macros/s/AKfycbwUiBZCx3Q5CJLz0FIFdfe-6ZM5VQSKczc3m28_ViVc6JDvEVSvg_wgS2pHxgNIOJyaag/exec";
+      const LOGO_URL = "logo.png";
+      const CLASSIFICACAO_URL = "https://exemplo.com/classificacao";
+      /* ========================= */
+
+      const $ = (s) => document.querySelector(s);
+      $("#logo").src = LOGO_URL;
+      $("#classLink").href = CLASSIFICACAO_URL;
+
+      /* ELs */
+      const loginCard = $("#loginCard"),
+        appBlock = $("#appBlock");
+      const inUser = $("#op_login"),
+        inPass = $("#op_pass"),
+        btnLogin = $("#btnLogin"),
+        loginErr = $("#loginErr"),
+        loginInfo = $("#loginInfo");
+
+      const inDate = $("#matchDate"),
+        selMatch = $("#matchSelect"),
+        btnReload = $("#reloadBtn"),
+        listInfo = $("#listInfo"),
+        loadErr = $("#loadErr");
+      const confrBody = $("#confrontosBody");
+
+      const scoreCard = $("#scoreCard"),
+        homeTag = $("#homeTag"),
+        awayTag = $("#awayTag"),
+        homeScore = $("#homeScore"),
+        awayScore = $("#awayScore"),
+        saveScore = $("#saveScore"),
+        scoreMsg = $("#scoreMsg");
+      const cardsCard = $("#cardsCard"),
+        homeTitle = $("#homeTitle"),
+        awayTitle = $("#awayTitle"),
+        homePlayer = $("#homePlayer"),
+        awayPlayer = $("#awayPlayer"),
+        homeCardType = $("#homeCardType"),
+        awayCardType = $("#awayCardType"),
+        homeMinute = $("#homeMinute"),
+        awayMinute = $("#awayMinute"),
+        addHomeCard = $("#addHomeCard"),
+        addAwayCard = $("#addAwayCard"),
+        cardsBody = $("#cardsBody"),
+        cardMsg = $("#cardMsg"),
+        cardErr = $("#cardErr");
+
+      /* STATE */
+      let operator = null,
+        matchesCache = [],
+        currentMatch = null,
+        homePlayers = [],
+        awayPlayers = [],
+        cardsCache = [];
+
+      /* API */
+      function api(payload) {
+        return fetch(WEB_APP_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+          },
+          body: new URLSearchParams(payload),
+        })
+          .then((r) => r.text())
+          .then((t) => {
+            let d;
+            try {
+              d = JSON.parse(t);
+            } catch {
+              throw new Error("Resposta inválida: " + t.slice(0, 200));
+            }
+            if (!d.ok) throw new Error(d.error || "Erro");
+            return d;
+          });
+      }
+      function opt(v, t) {
+        const o = document.createElement("option");
+        o.value = v;
+        o.textContent = t;
+        return o;
+      }
+      function clear(el) {
+        el.innerHTML = "";
+      }
+      function show(el) {
+        el.classList.remove("hide");
+      }
+      function hide(el) {
+        el.classList.add("hide");
+      }
+
+      /* LOGIN */
+      btnLogin.addEventListener("click", async () => {
+        const login = (inUser.value || "").trim(),
+          pass = (inPass.value || "").trim();
+        if (!login || !pass) {
+          loginErr.textContent = "Informe usuário e senha.";
+          show(loginErr);
+          setTimeout(() => hide(loginErr), 2200);
+          return;
+        }
+        // valida credencial sem gravar nada: tentamos uma chamada que deve retornar "matchId obrigatório" se o login é válido
+        try {
+          await api({
+            route: "result_save",
+            op_login: login,
+            op_pass: pass,
+            matchId: "",
+            score_home: 0,
+            score_away: 0,
+          });
+        } catch (e) {
+          if (
+            !String(e.message || "")
+              .toLowerCase()
+              .includes("matchid obrigatório")
+          ) {
+            loginErr.textContent = "Login ou senha inválidos.";
+            show(loginErr);
+            setTimeout(() => hide(loginErr), 2200);
+            return;
+          }
+        }
+        operator = { login, pass };
+        loginInfo.textContent = "Operador: " + login;
+        show(loginInfo);
+        hide(loginCard);
+        show(appBlock); // <- só agora o app aparece
+        // carrega partidas do dia
+        initDate();
+        loadMatches();
+      });
+
+      /* PARTIDAS + CONFRONTOS */
+      function initDate() {
+        const t = new Date();
+        const m = String(t.getMonth() + 1).padStart(2, "0");
+        const d = String(t.getDate()).padStart(2, "0");
+        inDate.value = `${t.getFullYear()}-${m}-${d}`;
+      }
+      async function loadMatches() {
+        hide(loadErr);
+        clear(selMatch);
+        selMatch.append(opt("", "— Selecione —"));
+        clear(confrBody);
+        confrBody.innerHTML = `<tr><td colspan="5" class="empty">Carregando…</td></tr>`;
+        try {
+          const { items } = await api({
+            route: "matches",
+            date: inDate.value || "",
+          });
+          matchesCache = (items || []).sort((a, b) =>
+            String(a.time).localeCompare(String(b.time))
+          );
+          listInfo.textContent = `${matchesCache.length} partida(s)`;
+          show(listInfo);
+
+          // preencher select e tabela
+          clear(selMatch);
+          selMatch.append(opt("", "— Selecione —"));
+          clear(confrBody);
+          if (!matchesCache.length) {
+            confrBody.innerHTML = `<tr><td colspan="5" class="empty">Nenhuma partida.</td></tr>`;
+            return;
+          }
+          for (const m of matchesCache) {
+            selMatch.append(
+              opt(
+                m.matchId,
+                `${m.time || "--:--"} — ${m.home_team_slug} x ${
+                  m.away_team_slug
+                }`
+              )
+            );
+            const tr = document.createElement("tr");
+            tr.className = "tr-click";
+            tr.dataset.id = m.matchId;
+            tr.innerHTML = `<td>${m.time || "--:--"}</td><td>${
+              m.home_team_slug
+            }</td><td>${m.away_team_slug}</td><td>${m.venue || ""}</td><td>${
+              m.status || ""
+            }</td>`;
+            tr.addEventListener("click", () => {
+              selMatch.value = m.matchId;
+              onMatchChange();
+            });
+            confrBody.appendChild(tr);
+          }
+        } catch (e) {
+          loadErr.textContent = e.message;
+          show(loadErr);
+          confrBody.innerHTML = `<tr><td colspan="5" class="empty">Erro ao carregar.</td></tr>`;
+        }
+      }
+      selMatch.addEventListener("change", onMatchChange);
+      $("#reloadBtn").addEventListener("click", loadMatches);
+
+      /* QUANDO ESCOLHE UMA PARTIDA */
+      async function onMatchChange() {
+        scoreMsg.classList.add("hide");
+        cardMsg.classList.add("hide");
+        cardErr.classList.add("hide");
+        const id = selMatch.value;
+        if (!id) {
+          currentMatch = null;
+          return;
+        }
+        currentMatch = matchesCache.find(
+          (m) => String(m.matchId) === String(id)
+        );
+        if (!currentMatch) {
+          alert("Partida não encontrada.");
+          return;
+        }
+
+        // Placar header
+        homeTag.textContent = currentMatch.home_team_slug;
+        awayTag.textContent = currentMatch.away_team_slug;
+        show(scoreCard);
+
+        // Jogadores
+        const [hp, ap] = await Promise.all([
+          api({ route: "players", team: currentMatch.home_team_slug }),
+          api({ route: "players", team: currentMatch.away_team_slug }),
+        ]);
+        homePlayers = hp.items || [];
+        awayPlayers = ap.items || [];
+        fillPlayers();
+        show(cardsCard);
+
+        // Lista cartões atuais
+        await refreshCards();
+      }
+      function fillPlayers() {
+        function o(v, t) {
+          const e = document.createElement("option");
+          e.value = v;
+          e.textContent = t;
+          return e;
+        }
+        clear(homePlayer);
+        clear(awayPlayer);
+        homePlayers.forEach((p) => homePlayer.append(o(p.rowId, p.name)));
+        awayPlayers.forEach((p) => awayPlayer.append(o(p.rowId, p.name)));
+        $(
+          "#homeTitle"
+        ).textContent = `Cartões — ${currentMatch.home_team_slug}`;
+        $(
+          "#awayTitle"
+        ).textContent = `Cartões — ${currentMatch.away_team_slug}`;
+      }
+
+      /* SALVAR PLACAR */
+      saveScore.addEventListener("click", async () => {
+        if (!operator) {
+          showErr("Faça login.");
+          return;
+        }
+        if (!currentMatch) {
+          alert("Selecione uma partida.");
+          return;
+        }
+        try {
+          await api({
+            route: "result_save",
+            op_login: operator.login,
+            op_pass: operator.pass,
+            matchId: currentMatch.matchId,
+            score_home: Number(homeScore.value || 0),
+            score_away: Number(awayScore.value || 0),
+          });
+          scoreMsg.textContent = "Placar salvo.";
+          show(scoreMsg);
+          setTimeout(() => hide(scoreMsg), 1600);
+        } catch (e) {
+          alert("Erro: " + e.message);
+        }
+      });
+
+      /* CARTÕES */
+      async function refreshCards() {
+        if (!currentMatch) return;
+        try {
+          const { items } = await api({
+            route: "cards_list",
+            matchId: currentMatch.matchId,
+          });
+          cardsCache = items || [];
+          drawCards();
+        } catch (e) {
+          cardsBody.innerHTML = `<tr><td colspan="6" class="empty">Erro: ${e.message}</td></tr>`;
+        }
+      }
+      function drawCards() {
+        clear(cardsBody);
+        if (!cardsCache.length) {
+          cardsBody.innerHTML = `<tr><td colspan="6" class="empty">Nenhum cartão lançado.</td></tr>`;
+          return;
+        }
+        for (const c of cardsCache) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+      <td>${c.team_slug}</td>
+      <td>${c.player_name || c.player_rowId}</td>
+      <td>${
+        c.card === "R"
+          ? '<span class="tagR">Vermelho</span>'
+          : '<span class="tagY">Amarelo</span>'
+      }</td>
+      <td>${c.minute || ""}</td>
+      <td>${c.notes || ""}</td>
+      <td><button class="ghost" data-id="${c.cardId}">Excluir</button></td>`;
+          cardsBody.appendChild(tr);
+        }
+      }
+      async function addCard(side) {
+        if (!operator) {
+          show(loginErr);
+          loginErr.textContent = "Faça login.";
+          return;
+        }
+        if (!currentMatch) {
+          alert("Selecione uma partida.");
+          return;
+        }
+        const isHome = side === "home";
+        const playerSel = isHome ? homePlayer : awayPlayer;
+        const minuteEl = isHome ? homeMinute : awayMinute;
+        const typeSel = isHome ? homeCardType : awayCardType;
+        const players = isHome ? homePlayers : awayPlayers;
+        const teamSlug = isHome
+          ? currentMatch.home_team_slug
+          : currentMatch.away_team_slug;
+
+        const rowId = playerSel.value;
+        const p = players.find((x) => String(x.rowId) === String(rowId));
+        try {
+          await api({
+            route: "card_add",
+            op_login: operator.login,
+            op_pass: operator.pass,
+            matchId: currentMatch.matchId,
+            card_team: teamSlug,
+            player_rowId: rowId,
+            player_name: p ? p.name : "",
+            card: typeSel.value,
+            minute: minuteEl.value || "",
+          });
+          cardMsg.textContent = "Cartão registrado.";
+          show(cardMsg);
+          setTimeout(() => hide(cardMsg), 1600);
+          minuteEl.value = "";
+          await refreshCards();
+        } catch (e) {
+          cardErr.textContent = e.message;
+          show(cardErr);
+          setTimeout(() => hide(cardErr), 2000);
+        }
+      }
+      addHomeCard.addEventListener("click", () => addCard("home"));
+      addAwayCard.addEventListener("click", () => addCard("away"));
+      cardsBody.addEventListener("click", async (ev) => {
+        const b = ev.target.closest("button[data-id]");
+        if (!b) return;
+        if (!operator) {
+          loginErr.textContent = "Faça login.";
+          show(loginErr);
+          return;
+        }
+        if (!confirm("Remover este cartão?")) return;
+        try {
+          await api({
+            route: "card_del",
+            op_login: operator.login,
+            op_pass: operator.pass,
+            cardId: b.dataset.id,
+          });
+          await refreshCards();
+        } catch (e) {
+          alert(e.message);
+        }
+      });
+
+      /* INIT: mostra só login */
+      (function () {
+        $("#logo").src = LOGO_URL;
+        hide(appBlock);
+        show(loginCard);
+      })();
+    </script>
+  </body>
+</html>
