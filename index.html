@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SUPER COPA COHATRAC APECADÃO — Placar & Cartões</title>
+    <title>SUPER COPA COHATRAC APECADÃO — Placar, Cartões & Gols</title>
     <style>
       :root {
         --bg: #0f172a;
@@ -12,8 +12,6 @@
         --ink: #e5e7eb;
         --muted: #94a3b8;
         --brand: #f59e0b;
-        --ok: #10b981;
-        --warn: #ef4444;
       }
       * {
         box-sizing: border-box;
@@ -78,7 +76,7 @@
         border: 1px solid var(--line);
         padding: 10px 12px;
         background: #0a0f1a;
-        color: var(--ink);
+        color: #fff;
         text-decoration: none;
         cursor: pointer;
       }
@@ -90,7 +88,7 @@
       }
       button.ghost {
         background: transparent;
-        color: var(--ink);
+        color: #fff;
         border: 1px solid var(--line);
       }
       .badge {
@@ -123,7 +121,7 @@
         border: 1px solid var(--line);
         padding: 10px 12px;
         background: #0a0f1a;
-        color: var(--ink);
+        color: #fff;
       }
       input[type="number"] {
         width: 90px;
@@ -185,17 +183,30 @@
         padding: 4px 8px;
         border-radius: 8px;
       }
+      .tagN {
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px solid #064e3b;
+        color: #a7f3d0;
+        padding: 4px 8px;
+        border-radius: 8px;
+      }
+      .tagP {
+        background: rgba(245, 158, 11, 0.15);
+        border: 1px solid #92400e;
+        color: #fcd34d;
+        padding: 4px 8px;
+        border-radius: 8px;
+      }
+      .tagGC {
+        background: rgba(99, 102, 241, 0.15);
+        border: 1px solid #3730a3;
+        color: #c7d2fe;
+        padding: 4px 8px;
+        border-radius: 8px;
+      }
       .note {
         font-size: 12px;
         color: var(--muted);
-      }
-      .err {
-        background: rgba(239, 68, 68, 0.12);
-        border: 1px solid #7f1d1d;
-        color: #fecaca;
-        padding: 10px;
-        border-radius: 10px;
-        margin-top: 8px;
       }
       .ok {
         background: rgba(16, 185, 129, 0.12);
@@ -205,21 +216,13 @@
         border-radius: 10px;
         margin-top: 8px;
       }
-      .loader {
-        display: inline-block;
-        width: 14px;
-        height: 14px;
-        border: 2px solid #94a3b8;
-        border-top-color: transparent;
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-        vertical-align: middle;
-        margin-left: 6px;
-      }
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
+      .err {
+        background: rgba(239, 68, 68, 0.12);
+        border: 1px solid #7f1d1d;
+        color: #fecaca;
+        padding: 10px;
+        border-radius: 10px;
+        margin-top: 8px;
       }
       .empty {
         padding: 12px;
@@ -236,12 +239,6 @@
         background: var(--line);
         margin: 10px 0;
         border-radius: 1px;
-      }
-      .small {
-        font-size: 12px;
-      }
-      .right {
-        margin-left: auto;
       }
     </style>
   </head>
@@ -261,7 +258,7 @@
     </header>
 
     <main class="wrap">
-      <!-- LOGIN (único visível ao abrir) -->
+      <!-- LOGIN -->
       <section class="card" id="loginCard">
         <h2>Login do Operador</h2>
         <div class="row">
@@ -278,13 +275,13 @@
         </div>
         <div id="loginErr" class="err hide"></div>
         <div class="note">
-          Somente operadores autorizados podem salvar placar e lançar cartões.
+          Somente operadores autorizados podem salvar placar, cartões e gols.
         </div>
       </section>
 
-      <!-- BLOCO GERAL (aparece só depois do login) -->
+      <!-- APP -->
       <section id="appBlock" class="hide">
-        <!-- FILTROS + CONFRONTOS -->
+        <!-- PARTIDAS -->
         <section class="card">
           <h2>Partidas do Dia</h2>
           <div class="row">
@@ -321,12 +318,12 @@
             </tbody>
           </table>
           <div class="note">
-            Toque numa linha para **selecionar** a partida ativa.
+            Toque numa linha para selecionar a partida ativa.
           </div>
         </section>
 
         <!-- PLACAR -->
-        <section class="card" id="scoreCard" class="hide">
+        <section class="card" id="scoreCard">
           <div class="row" style="justify-content: space-between">
             <div class="row">
               <span id="homeTag" class="badge"></span>
@@ -340,11 +337,11 @@
             </div>
           </div>
           <div id="scoreMsg" class="ok hide"></div>
-          <div class="note">Salva na aba “Resultados”.</div>
+          <div class="note">Salva/atualiza na aba “Resultados”.</div>
         </section>
 
         <!-- CARTÕES -->
-        <section class="card" id="cardsCard" class="hide">
+        <section class="card" id="cardsCard">
           <h2>Cartões</h2>
           <div class="grid two">
             <div>
@@ -358,7 +355,6 @@
                 <input id="homeMinute" type="text" placeholder="min" />
                 <button id="addHomeCard" class="btn">Adicionar</button>
               </div>
-              <div class="note">Jogadores da aba “Atletas”.</div>
             </div>
             <div>
               <h3 id="awayTitle">Time Visitante</h3>
@@ -375,7 +371,6 @@
           </div>
 
           <div class="sep"></div>
-
           <table class="table">
             <thead>
               <tr>
@@ -383,29 +378,81 @@
                 <th>Jogador</th>
                 <th>Cartão</th>
                 <th>Min</th>
-                <th>Obs</th>
                 <th></th>
               </tr>
             </thead>
             <tbody id="cardsBody">
               <tr>
-                <td colspan="6" class="empty">Nenhum cartão lançado.</td>
+                <td colspan="5" class="empty">Nenhum cartão lançado.</td>
               </tr>
             </tbody>
           </table>
           <div id="cardMsg" class="ok hide"></div>
           <div id="cardErr" class="err hide"></div>
         </section>
+
+        <!-- GOLS (sem assistência) -->
+        <section class="card" id="goalsCard">
+          <h2>Gols</h2>
+          <div class="grid two">
+            <div>
+              <h3 id="homeGoalsTitle">Time Casa</h3>
+              <div class="row">
+                <select id="homeGoalPlayer"></select>
+                <input id="homeGoalMinute" type="text" placeholder="min" />
+                <select id="homeGoalType">
+                  <option value="N">Normal</option>
+                  <option value="P">Pênalti</option>
+                  <option value="GC">Gol contra</option>
+                </select>
+                <button id="addHomeGoal" class="btn">Adicionar</button>
+              </div>
+            </div>
+            <div>
+              <h3 id="awayGoalsTitle">Time Visitante</h3>
+              <div class="row">
+                <select id="awayGoalPlayer"></select>
+                <input id="awayGoalMinute" type="text" placeholder="min" />
+                <select id="awayGoalType">
+                  <option value="N">Normal</option>
+                  <option value="P">Pênalti</option>
+                  <option value="GC">Gol contra</option>
+                </select>
+                <button id="addAwayGoal" class="btn">Adicionar</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="sep"></div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Jogador</th>
+                <th>Min</th>
+                <th>Tipo</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="goalsBody">
+              <tr>
+                <td colspan="5" class="empty">Nenhum gol registrado.</td>
+              </tr>
+            </tbody>
+          </table>
+          <div id="goalMsg" class="ok hide"></div>
+          <div id="goalErr" class="err hide"></div>
+        </section>
       </section>
     </main>
 
     <script>
-      /* ========= CONFIG ========= */
+      /* ==== CONFIG ==== */
       const WEB_APP_URL =
-        "https://script.google.com/macros/s/AKfycbwUiBZCx3Q5CJLz0FIFdfe-6ZM5VQSKczc3m28_ViVc6JDvEVSvg_wgS2pHxgNIOJyaag/exec";
+        "https://script.google.com/macros/s/AKfycbzWlza7Bn8de82LX8JFhV3y88iVlhVqn6g_j6Iujf0lDn7YxMJd15HAhmCvDpHsQfPvWA/exec";
       const LOGO_URL = "logo.png";
       const CLASSIFICACAO_URL = "https://exemplo.com/classificacao";
-      /* ========================= */
+      /* ================ */
 
       const $ = (s) => document.querySelector(s);
       $("#logo").src = LOGO_URL;
@@ -434,6 +481,7 @@
         awayScore = $("#awayScore"),
         saveScore = $("#saveScore"),
         scoreMsg = $("#scoreMsg");
+
       const cardsCard = $("#cardsCard"),
         homeTitle = $("#homeTitle"),
         awayTitle = $("#awayTitle"),
@@ -449,15 +497,31 @@
         cardMsg = $("#cardMsg"),
         cardErr = $("#cardErr");
 
+      const goalsCard = $("#goalsCard"),
+        homeGoalsTitle = $("#homeGoalsTitle"),
+        awayGoalsTitle = $("#awayGoalsTitle"),
+        homeGoalPlayer = $("#homeGoalPlayer"),
+        awayGoalPlayer = $("#awayGoalPlayer"),
+        homeGoalMinute = $("#homeGoalMinute"),
+        awayGoalMinute = $("#awayGoalMinute"),
+        homeGoalType = $("#homeGoalType"),
+        awayGoalType = $("#awayGoalType"),
+        addHomeGoal = $("#addHomeGoal"),
+        addAwayGoal = $("#addAwayGoal"),
+        goalsBody = $("#goalsBody"),
+        goalMsg = $("#goalMsg"),
+        goalErr = $("#goalErr");
+
       /* STATE */
       let operator = null,
         matchesCache = [],
         currentMatch = null,
         homePlayers = [],
         awayPlayers = [],
-        cardsCache = [];
+        cardsCache = [],
+        goalsCache = [];
 
-      /* API */
+      /* API helper */
       function api(payload) {
         return fetch(WEB_APP_URL, {
           method: "POST",
@@ -504,8 +568,8 @@
           setTimeout(() => hide(loginErr), 2200);
           return;
         }
-        // valida credencial sem gravar nada: tentamos uma chamada que deve retornar "matchId obrigatório" se o login é válido
         try {
+          // valida credencial: rota que exige operador e vai reclamar de matchId vazio
           await api({
             route: "result_save",
             op_login: login,
@@ -530,13 +594,12 @@
         loginInfo.textContent = "Operador: " + login;
         show(loginInfo);
         hide(loginCard);
-        show(appBlock); // <- só agora o app aparece
-        // carrega partidas do dia
+        show(appBlock);
         initDate();
         loadMatches();
       });
 
-      /* PARTIDAS + CONFRONTOS */
+      /* PARTIDAS */
       function initDate() {
         const t = new Date();
         const m = String(t.getMonth() + 1).padStart(2, "0");
@@ -559,8 +622,6 @@
           );
           listInfo.textContent = `${matchesCache.length} partida(s)`;
           show(listInfo);
-
-          // preencher select e tabela
           clear(selMatch);
           selMatch.append(opt("", "— Selecione —"));
           clear(confrBody);
@@ -600,11 +661,13 @@
       selMatch.addEventListener("change", onMatchChange);
       $("#reloadBtn").addEventListener("click", loadMatches);
 
-      /* QUANDO ESCOLHE UMA PARTIDA */
+      /* QUANDO ESCOLHE PARTIDA */
       async function onMatchChange() {
         scoreMsg.classList.add("hide");
         cardMsg.classList.add("hide");
         cardErr.classList.add("hide");
+        goalMsg.classList.add("hide");
+        goalErr.classList.add("hide");
         const id = selMatch.value;
         if (!id) {
           currentMatch = null;
@@ -618,12 +681,30 @@
           return;
         }
 
-        // Placar header
+        // Header do placar
         homeTag.textContent = currentMatch.home_team_slug;
         awayTag.textContent = currentMatch.away_team_slug;
         show(scoreCard);
 
-        // Jogadores
+        // Carrega placar salvo (se existir)
+        try {
+          const res = await api({
+            route: "result_get",
+            matchId: currentMatch.matchId,
+          });
+          if (res && res.found) {
+            homeScore.value = Number(res.score_home || 0);
+            awayScore.value = Number(res.score_away || 0);
+          } else {
+            homeScore.value = "";
+            awayScore.value = "";
+          }
+        } catch (_) {
+          homeScore.value = "";
+          awayScore.value = "";
+        }
+
+        // Jogadores (casa/fora)
         const [hp, ap] = await Promise.all([
           api({ route: "players", team: currentMatch.home_team_slug }),
           api({ route: "players", team: currentMatch.away_team_slug }),
@@ -631,11 +712,14 @@
         homePlayers = hp.items || [];
         awayPlayers = ap.items || [];
         fillPlayers();
+        fillGoalSelectors();
         show(cardsCard);
+        show(goalsCard);
 
-        // Lista cartões atuais
-        await refreshCards();
+        // Listas
+        await Promise.all([refreshCards(), refreshGoals()]);
       }
+
       function fillPlayers() {
         function o(v, t) {
           const e = document.createElement("option");
@@ -654,11 +738,30 @@
           "#awayTitle"
         ).textContent = `Cartões — ${currentMatch.away_team_slug}`;
       }
+      function fillGoalSelectors() {
+        function o(v, t) {
+          const e = document.createElement("option");
+          e.value = v;
+          e.textContent = t;
+          return e;
+        }
+        clear(homeGoalPlayer);
+        clear(awayGoalPlayer);
+        homePlayers.forEach((p) => homeGoalPlayer.append(o(p.rowId, p.name)));
+        awayPlayers.forEach((p) => awayGoalPlayer.append(o(p.rowId, p.name)));
+        $(
+          "#homeGoalsTitle"
+        ).textContent = `Gols — ${currentMatch.home_team_slug}`;
+        $(
+          "#awayGoalsTitle"
+        ).textContent = `Gols — ${currentMatch.away_team_slug}`;
+      }
 
       /* SALVAR PLACAR */
       saveScore.addEventListener("click", async () => {
         if (!operator) {
-          showErr("Faça login.");
+          loginErr.textContent = "Faça login.";
+          show(loginErr);
           return;
         }
         if (!currentMatch) {
@@ -693,13 +796,13 @@
           cardsCache = items || [];
           drawCards();
         } catch (e) {
-          cardsBody.innerHTML = `<tr><td colspan="6" class="empty">Erro: ${e.message}</td></tr>`;
+          cardsBody.innerHTML = `<tr><td colspan="5" class="empty">Erro: ${e.message}</td></tr>`;
         }
       }
       function drawCards() {
         clear(cardsBody);
         if (!cardsCache.length) {
-          cardsBody.innerHTML = `<tr><td colspan="6" class="empty">Nenhum cartão lançado.</td></tr>`;
+          cardsBody.innerHTML = `<tr><td colspan="5" class="empty">Nenhum cartão lançado.</td></tr>`;
           return;
         }
         for (const c of cardsCache) {
@@ -713,15 +816,14 @@
           : '<span class="tagY">Amarelo</span>'
       }</td>
       <td>${c.minute || ""}</td>
-      <td>${c.notes || ""}</td>
       <td><button class="ghost" data-id="${c.cardId}">Excluir</button></td>`;
           cardsBody.appendChild(tr);
         }
       }
       async function addCard(side) {
         if (!operator) {
-          show(loginErr);
           loginErr.textContent = "Faça login.";
+          show(loginErr);
           return;
         }
         if (!currentMatch) {
@@ -736,7 +838,6 @@
         const teamSlug = isHome
           ? currentMatch.home_team_slug
           : currentMatch.away_team_slug;
-
         const rowId = playerSel.value;
         const p = players.find((x) => String(x.rowId) === String(rowId));
         try {
@@ -786,9 +887,112 @@
         }
       });
 
-      /* INIT: mostra só login */
+      /* GOLS */
+      async function refreshGoals() {
+        if (!currentMatch) return;
+        try {
+          const { items } = await api({
+            route: "goals_list",
+            matchId: currentMatch.matchId,
+          });
+          goalsCache = items || [];
+          drawGoals();
+        } catch (e) {
+          goalsBody.innerHTML = `<tr><td colspan="5" class="empty">Erro: ${e.message}</td></tr>`;
+        }
+      }
+      function drawGoals() {
+        clear(goalsBody);
+        if (!goalsCache.length) {
+          goalsBody.innerHTML = `<tr><td colspan="5" class="empty">Nenhum gol registrado.</td></tr>`;
+          return;
+        }
+        for (const g of goalsCache) {
+          const tag =
+            g.type === "GC"
+              ? '<span class="tagGC">Gol contra</span>'
+              : g.type === "P"
+              ? '<span class="tagP">Pênalti</span>'
+              : '<span class="tagN">Normal</span>';
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+      <td>${g.team_slug}</td>
+      <td>${g.player_name || g.player_rowId}</td>
+      <td>${g.minute || ""}</td>
+      <td>${tag}</td>
+      <td><button class="ghost" data-gid="${g.goalId}">Excluir</button></td>`;
+          goalsBody.appendChild(tr);
+        }
+      }
+      async function addGoal(side) {
+        if (!operator) {
+          loginErr.textContent = "Faça login.";
+          show(loginErr);
+          return;
+        }
+        if (!currentMatch) {
+          alert("Selecione uma partida.");
+          return;
+        }
+        const isHome = side === "home";
+        const playerSel = isHome ? homeGoalPlayer : awayGoalPlayer;
+        const minuteEl = isHome ? homeGoalMinute : awayGoalMinute;
+        const typeSel = isHome ? homeGoalType : awayGoalType;
+        const players = isHome ? homePlayers : awayPlayers;
+        const teamSlug = isHome
+          ? currentMatch.home_team_slug
+          : currentMatch.away_team_slug;
+        const rowId = playerSel.value;
+        const p = players.find((x) => String(x.rowId) === String(rowId));
+        try {
+          await api({
+            route: "goal_add",
+            op_login: operator.login,
+            op_pass: operator.pass,
+            matchId: currentMatch.matchId,
+            goal_team: teamSlug,
+            player_rowId: rowId,
+            player_name: p ? p.name : "",
+            minute: minuteEl.value || "",
+            type: typeSel.value || "N",
+          });
+          goalMsg.textContent = "Gol registrado.";
+          show(goalMsg);
+          setTimeout(() => hide(goalMsg), 1600);
+          minuteEl.value = "";
+          await refreshGoals();
+        } catch (e) {
+          goalErr.textContent = e.message;
+          show(goalErr);
+          setTimeout(() => hide(goalErr), 2000);
+        }
+      }
+      addHomeGoal.addEventListener("click", () => addGoal("home"));
+      addAwayGoal.addEventListener("click", () => addGoal("away"));
+      goalsBody.addEventListener("click", async (ev) => {
+        const b = ev.target.closest("button[data-gid]");
+        if (!b) return;
+        if (!operator) {
+          loginErr.textContent = "Faça login.";
+          show(loginErr);
+          return;
+        }
+        if (!confirm("Remover este gol?")) return;
+        try {
+          await api({
+            route: "goal_del",
+            op_login: operator.login,
+            op_pass: operator.pass,
+            goalId: b.dataset.gid,
+          });
+          await refreshGoals();
+        } catch (e) {
+          alert(e.message);
+        }
+      });
+
+      /* INIT */
       (function () {
-        $("#logo").src = LOGO_URL;
         hide(appBlock);
         show(loginCard);
       })();
